@@ -27,6 +27,7 @@ import { Choice, ColorField, Num, Section, Text as TextField, Toggle, Upload } f
 import { analyzeAudio, fileToDataUrl, fmtTime } from "@/lib/audio";
 import { store, uid } from "@/lib/db";
 import { downloadBlob, estimateSizeMB, exportVideo, pickMime } from "@/lib/export";
+import { canExportMp4, exportVideoMp4 } from "@/lib/server-export";
 import { newProject } from "@/lib/project";
 import { TEMPLATES, getTemplate } from "@/lib/templates";
 import { autoFit } from "@/lib/layout";
@@ -142,6 +143,7 @@ function EditorPage() {
   const [exporting, setExporting] = useState(false);
   const [progress, setProgress] = useState(0);
   const [lastExport, setLastExport] = useState<{ mb: number; ext: string } | null>(null);
+  const [stage, setStage] = useState("");
   const cancelRef = useRef(false);
   const [analyzing, setAnalyzing] = useState(false);
 
@@ -299,13 +301,28 @@ function EditorPage() {
     setExporting(true);
     setProgress(0);
     cancelRef.current = false;
+    setStage("جاري تجهيز التصدير");
     try {
-      const { blob, ext } = await exportVideo(
-        project,
-        { cover, logo, bg },
-        setProgress,
-        () => cancelRef.current,
-      );
+      const useMp4 = await canExportMp4();
+      const { blob, ext } = useMp4
+        ? await exportVideoMp4(
+            project,
+            { cover, logo, bg },
+            (p, s) => {
+              setProgress(p);
+              setStage(s);
+            },
+            () => cancelRef.current,
+          )
+        : await exportVideo(
+            project,
+            { cover, logo, bg },
+            (p) => {
+              setProgress(p);
+              setStage("جاري التسجيل في الوقت الحقيقي");
+            },
+            () => cancelRef.current,
+          );
       if (cancelRef.current) {
         toast.info("تم إلغاء التصدير");
         return;
@@ -317,6 +334,7 @@ function EditorPage() {
       toast.error(e instanceof Error ? e.message : "فشل التصدير");
     } finally {
       setExporting(false);
+      setStage("");
     }
   };
 
@@ -380,7 +398,7 @@ function EditorPage() {
           <div className="mb-4 rounded-2xl border border-border bg-panel p-4">
             <div className="mb-2 flex items-center justify-between text-sm">
               <span>
-                جاري التصدير {project.quality}p · {project.fps} إطار/ث · {pickMime().ext.toUpperCase()}
+                {stage || "جاري التصدير"} · {project.quality}p · {project.fps} إطار/ث
               </span>
               <span className="tabular-nums">{Math.round(progress * 100)}%</span>
             </div>
@@ -875,7 +893,7 @@ function EditorPage() {
                     </p>
                   )}
                   <p className="text-xs text-muted-foreground">
-                    الناتج: {pickMime().ext.toUpperCase()} · صوت AAC/Opus · المدة {fmtTime(duration)} بالضبط. التصدير يتم على جهازك بسرعة التشغيل الطبيعية، فدقيقة صوت تأخذ حوالي دقيقة. اترك الصفحة مفتوحة أثناء التصدير.
+                    الناتج: MP4 (H.264/AAC) · المدة {fmtTime(duration)} بالضبط. التصدير يرسم كل إطار على حِدة داخل المتصفح (نفس منطق سيرفر التصدير) فالنتيجة ثابتة الجودة وغير مرتبطة بسرعة التشغيل. في المتصفحات القديمة يتم الرجوع تلقائيًا للتسجيل المباشر ({pickMime().ext.toUpperCase()}). اترك الصفحة مفتوحة أثناء التصدير.
                   </p>
 
                   <Button className="w-full" onClick={doExport} disabled={exporting}>
