@@ -27,7 +27,7 @@ import { Choice, ColorField, Num, Section, Text as TextField, Toggle, Upload } f
 import { analyzeAudio, fileToDataUrl, fmtTime } from "@/lib/audio";
 import { store, uid } from "@/lib/db";
 import { downloadBlob, estimateSizeMB, exportVideo, pickMime } from "@/lib/export";
-import { canExportMp4, exportVideoMp4 } from "@/lib/server-export";
+
 import { newProject } from "@/lib/project";
 import { TEMPLATES, getTemplate } from "@/lib/templates";
 import { autoFit } from "@/lib/layout";
@@ -303,26 +303,16 @@ function EditorPage() {
     cancelRef.current = false;
     setStage("جاري تجهيز التصدير");
     try {
-      const useMp4 = await canExportMp4();
-      const { blob, ext } = useMp4
-        ? await exportVideoMp4(
-            project,
-            { cover, logo, bg },
-            (p, s) => {
-              setProgress(p);
-              setStage(s);
-            },
-            () => cancelRef.current,
-          )
-        : await exportVideo(
-            project,
-            { cover, logo, bg },
-            (p) => {
-              setProgress(p);
-              setStage("جاري التسجيل في الوقت الحقيقي");
-            },
-            () => cancelRef.current,
-          );
+      const { blob, ext } = await exportVideo(
+        project,
+        { cover, logo, bg },
+        (p) => {
+          setProgress(p);
+          setStage("جاري التسجيل في الوقت الحقيقي");
+        },
+        () => cancelRef.current,
+      );
+
       if (cancelRef.current) {
         toast.info("تم إلغاء التصدير");
         return;
