@@ -27,6 +27,7 @@ import { Choice, ColorField, Num, Section, Text as TextField, Toggle, Upload } f
 import { analyzeAudio, fileToDataUrl, fmtTime } from "@/lib/audio";
 import { store, uid } from "@/lib/db";
 import { downloadBlob, estimateSizeMB, exportVideo, pickMime } from "@/lib/export";
+import { fixDurationToMp4 } from "@/lib/remux";
 
 import { newProject } from "@/lib/project";
 import { TEMPLATES, getTemplate } from "@/lib/templates";
@@ -303,11 +304,11 @@ function EditorPage() {
     cancelRef.current = false;
     setStage("جاري تجهيز التصدير");
     try {
-      const { blob, ext } = await exportVideo(
+      const rec = await exportVideo(
         project,
         { cover, logo, bg },
         (p) => {
-          setProgress(p);
+          setProgress(p * 0.9);
           setStage("جاري التسجيل في الوقت الحقيقي");
         },
         () => cancelRef.current,
@@ -317,6 +318,19 @@ function EditorPage() {
         toast.info("تم إلغاء التصدير");
         return;
       }
+
+      let blob = rec.blob;
+      let ext = rec.ext;
+      try {
+        setStage("جاري ضبط مدة الفيديو");
+        const fixed = await fixDurationToMp4(blob, (p) => setProgress(0.9 + p * 0.1));
+        blob = fixed.blob;
+        ext = fixed.ext;
+      } catch {
+        // لو فشل الضبط، ننزّل الملف الأصلي كما هو
+      }
+      setProgress(1);
+
       downloadBlob(blob, `${project.name.replace(/[^\w\u0600-\u06FF -]/g, "") || "player"}.${ext}`);
       setLastExport({ mb: blob.size / (1024 * 1024), ext });
       toast.success(`تم التصدير · الحجم الفعلي ${(blob.size / (1024 * 1024)).toFixed(1)} ميجابايت`);
