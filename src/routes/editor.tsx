@@ -27,6 +27,7 @@ import { Choice, ColorField, Num, Section, Text as TextField, Toggle, Upload } f
 import { analyzeAudio, fileToDataUrl, fmtTime } from "@/lib/audio";
 import { store, uid } from "@/lib/db";
 import { downloadBlob, estimateSizeMB, exportVideo, pickMime } from "@/lib/export";
+import { fixDurationToMp4 } from "@/lib/remux";
 
 import { newProject } from "@/lib/project";
 import { TEMPLATES, getTemplate } from "@/lib/templates";
