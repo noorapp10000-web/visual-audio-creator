@@ -43,7 +43,7 @@ export function autoFit(src: PlayerConfig, aspect: Aspect = src.aspect): PlayerC
     align === "left" ? colLeft : align === "right" ? colRight : colCenter;
 
   /* ---- cover ---- */
-  cfg.cover.size = clamp(cfg.cover.size, 0.2, wide ? 0.7 : 0.8);
+  cfg.cover.size = clamp(cfg.cover.size, 0.2, wide ? 0.7 : square ? 0.55 : 0.8);
   if (wide) {
     cfg.cover.x = 0.27;
     cfg.cover.y = 0.5;
