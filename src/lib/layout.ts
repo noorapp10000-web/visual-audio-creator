@@ -31,6 +31,7 @@ export function autoFit(src: PlayerConfig, aspect: Aspect = src.aspect): PlayerC
   const min = Math.min(W, H);
   const scale = min / 1080;
   const wide = W / H > 1.2;
+  const square = Math.abs(W / H - 1) < 0.02;
 
   /* ---- column geometry ---- */
   const colCenter = wide ? 0.73 : 0.5;
@@ -42,7 +43,7 @@ export function autoFit(src: PlayerConfig, aspect: Aspect = src.aspect): PlayerC
     align === "left" ? colLeft : align === "right" ? colRight : colCenter;
 
   /* ---- cover ---- */
-  cfg.cover.size = clamp(cfg.cover.size, 0.2, wide ? 0.7 : 0.8);
+  cfg.cover.size = clamp(cfg.cover.size, 0.2, wide ? 0.7 : square ? 0.55 : 0.8);
   if (wide) {
     cfg.cover.x = 0.27;
     cfg.cover.y = 0.5;
@@ -91,8 +92,8 @@ export function autoFit(src: PlayerConfig, aspect: Aspect = src.aspect): PlayerC
     }
   };
 
-  const gap = wide ? 0.035 : 0.026;
-  const avail = wide ? 0.82 : 0.88;
+  const gap = wide ? 0.035 : square ? 0.018 : 0.026;
+  const avail = wide ? 0.82 : square ? 0.86 : 0.88;
 
   const total = () => stack.reduce((s, k) => s + blockHeight(k), 0) + gap * Math.max(0, stack.length - 1);
 
@@ -104,7 +105,7 @@ export function autoFit(src: PlayerConfig, aspect: Aspect = src.aspect): PlayerC
     cfg.cover.size *= f;
     cfg.logo.size *= f;
     TEXT_BLOCKS.forEach((k) => {
-      cfg[k].size = Math.max(16, cfg[k].size * f);
+      cfg[k].size = Math.max(square ? 20 : 16, cfg[k].size * f);
     });
     cfg.waveform.h *= f;
     cfg.controls.size = Math.max(0.035, cfg.controls.size * f);
