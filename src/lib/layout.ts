@@ -31,6 +31,7 @@ export function autoFit(src: PlayerConfig, aspect: Aspect = src.aspect): PlayerC
   const min = Math.min(W, H);
   const scale = min / 1080;
   const wide = W / H > 1.2;
+  const square = Math.abs(W / H - 1) < 0.02;
 
   /* ---- column geometry ---- */
   const colCenter = wide ? 0.73 : 0.5;
