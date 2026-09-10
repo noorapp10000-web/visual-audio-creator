@@ -489,7 +489,9 @@ TEMPLATES.push(...SQUARE);
 
 /* Every design also exists as a ready-made 16:9 (YouTube) layout,
    auto-fitted by the layout engine. */
-const WIDE: Template[] = TEMPLATES.filter((t) => t.config.aspect !== "16:9").map((t) => ({
+const WIDE: Template[] = TEMPLATES.filter(
+  (t) => t.config.aspect !== "16:9" && !t.id.endsWith("-square") && t.category !== "مشغل مصغّر",
+).map((t) => ({
   id: `${t.id}-wide`,
   name: `${t.name} · عريض 16:9`,
   category: t.category,
