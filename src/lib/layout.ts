@@ -105,7 +105,7 @@ export function autoFit(src: PlayerConfig, aspect: Aspect = src.aspect): PlayerC
     cfg.cover.size *= f;
     cfg.logo.size *= f;
     TEXT_BLOCKS.forEach((k) => {
-      cfg[k].size = Math.max(16, cfg[k].size * f);
+      cfg[k].size = Math.max(square ? 20 : 16, cfg[k].size * f);
     });
     cfg.waveform.h *= f;
     cfg.controls.size = Math.max(0.035, cfg.controls.size * f);
