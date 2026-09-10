@@ -364,6 +364,129 @@ export const TEMPLATES: Template[] = [
   }),
 ];
 
+/* ---------- hand-tuned 1:1 mini players (no auto-fit) ---------- */
+
+function makeExact(id: string, name: string, category: string, patch: Deep): Template {
+  const c = baseConfig();
+  for (const k of Object.keys(patch) as (keyof PlayerConfig)[]) {
+    const v = patch[k];
+    if (v !== null && typeof v === "object" && !Array.isArray(v) && typeof c[k] === "object") {
+      Object.assign(c[k] as object, v as object);
+    } else {
+      (c as unknown as Record<string, unknown>)[k as string] = v;
+    }
+  }
+  return { id, name, category, config: c };
+}
+
+const MINI: Template[] = [
+  makeExact("mini-glass", "مشغل مصغّر · زجاجي", "مشغل مصغّر", {
+    aspect: "1:1",
+    background: { type: "coverBlur", blur: 90, brightness: 0.5, saturation: 1.25, vignette: 0.35, overlay: 0.2, anim: "none" },
+    colors: { accent: "#ffffff", progress: "#ffffff", progressBg: "#ffffff33", wave: "#ffffff", glow: "#ffffff", border: "#ffffff44" },
+    card: { show: true, x: 0.5, y: 0.5, w: 0.88, h: 0.78, radius: 64, opacity: 0.16, blur: true, border: true },
+    logo: { show: false },
+    cover: { show: true, x: 0.72, y: 0.26, size: 0.3, shape: "rounded", radius: 28, shadow: 0.6, glow: 0.15, anim: "none" },
+    title: { align: "right", x: 0.86, y: 0.47, size: 54, weight: 700, font: "Cairo", rtl: true, maxWidth: 0.68, maxLines: 1 },
+    subtitle: { align: "right", x: 0.86, y: 0.56, size: 30, opacity: 0.7, font: "Cairo", rtl: true, maxWidth: 0.68, maxLines: 1 },
+    reciter: { show: false },
+    verse: { show: false },
+    timeline: { show: true, x: 0.5, y: 0.68, w: 0.74, h: 8, thumb: false, showTimes: true, timeSize: 22 },
+    controls: { show: true, x: 0.5, y: 0.83, size: 0.09, gap: 0.13, prevNext: true, filled: true },
+    waveform: { show: false },
+  }),
+  makeExact("mini-sidecar", "مشغل مصغّر · أفقي", "مشغل مصغّر", {
+    aspect: "1:1",
+    background: { type: "gradient", blur: 0, brightness: 1, vignette: 0.3, overlay: 0, anim: "none" },
+    colors: { bg: "#0c0f0e", bg2: "#1b2a26", accent: "#7fe3c0", progress: "#7fe3c0", progressBg: "#ffffff22", wave: "#7fe3c0", glow: "#7fe3c0" },
+    card: { show: false },
+    logo: { show: false },
+    cover: { show: true, x: 0.76, y: 0.42, size: 0.36, shape: "rounded", radius: 32, shadow: 0.5, glow: 0.15, anim: "none" },
+    title: { align: "right", x: 0.5, y: 0.36, size: 52, weight: 700, font: "Cairo", rtl: true, maxWidth: 0.4, maxLines: 2 },
+    subtitle: { show: false },
+    reciter: { align: "right", x: 0.5, y: 0.5, size: 28, opacity: 0.75, font: "Cairo", rtl: true, maxWidth: 0.4, maxLines: 1 },
+    verse: { show: false },
+    timeline: { show: true, x: 0.5, y: 0.68, w: 0.8, h: 6, thumb: true, showTimes: true, timeSize: 22 },
+    controls: { show: true, x: 0.5, y: 0.82, size: 0.085, gap: 0.12, prevNext: true, filled: false },
+    waveform: { show: true, style: "minimal", x: 0.5, y: 0.94, w: 0.8, h: 0.03, bars: 90, barW: 2, gap: 2, opacity: 0.7 },
+  }),
+  makeExact("mini-light", "مشغل مصغّر · فاتح", "مشغل مصغّر", {
+    aspect: "1:1",
+    background: { type: "solid", blur: 0, brightness: 1, vignette: 0.08, overlay: 0, anim: "none" },
+    colors: {
+      bg: "#f5f3ee", bg2: "#f5f3ee", text: "#15201c", primary: "#15201c", muted: "#5f6b66",
+      accent: "#2f8f74", progress: "#2f8f74", progressBg: "#00000016", wave: "#2f8f74", glow: "#2f8f74", border: "#00000014",
+    },
+    card: { show: true, x: 0.5, y: 0.5, w: 0.9, h: 0.8, radius: 56, opacity: 0.06, blur: false, border: true },
+    logo: { show: false },
+    cover: { show: true, x: 0.5, y: 0.28, size: 0.34, shape: "rounded", radius: 26, shadow: 0.2, glow: 0, anim: "none" },
+    title: { y: 0.48, size: 48, weight: 600, font: "Cairo", rtl: true, color: "#15201c", maxWidth: 0.78, maxLines: 1 },
+    subtitle: { y: 0.56, size: 26, opacity: 0.8, font: "Cairo", rtl: true, color: "#5f6b66", maxWidth: 0.78, maxLines: 1 },
+    reciter: { show: false },
+    verse: { show: false },
+    timeline: { show: true, x: 0.5, y: 0.67, w: 0.76, h: 6, thumb: true, showTimes: true, timeSize: 22 },
+    controls: { show: true, x: 0.5, y: 0.81, size: 0.085, gap: 0.12, prevNext: true, filled: false },
+    waveform: { show: false },
+  }),
+  makeExact("mini-dark", "مشغل مصغّر · داكن", "مشغل مصغّر", {
+    aspect: "1:1",
+    background: { type: "coverBlur", blur: 120, brightness: 0.32, saturation: 1.1, vignette: 0.6, overlay: 0.3, anim: "none" },
+    colors: { accent: "#f2f2f2", progress: "#f2f2f2", progressBg: "#ffffff2a", wave: "#c9c9c9", glow: "#ffffff" },
+    card: { show: false },
+    logo: { show: false },
+    cover: { show: true, x: 0.5, y: 0.3, size: 0.38, shape: "rounded", radius: 22, shadow: 0.8, glow: 0.1, anim: "none" },
+    title: { y: 0.51, size: 50, weight: 700, font: "Cairo", rtl: true, maxWidth: 0.8, maxLines: 1 },
+    subtitle: { y: 0.59, size: 27, opacity: 0.65, font: "Cairo", rtl: true, maxWidth: 0.8, maxLines: 1 },
+    reciter: { show: false },
+    verse: { show: false },
+    timeline: { show: true, x: 0.5, y: 0.7, w: 0.78, h: 5, thumb: false, showTimes: true, timeSize: 22 },
+    controls: { show: true, x: 0.5, y: 0.84, size: 0.09, gap: 0.13, prevNext: true, filled: true },
+    waveform: { show: false },
+  }),
+  makeExact("mini-ring", "مشغل مصغّر · حلقة", "مشغل مصغّر", {
+    aspect: "1:1",
+    background: { type: "gradient", blur: 0, brightness: 1, vignette: 0.4, overlay: 0, anim: "moving" },
+    colors: { bg: "#0a0f18", bg2: "#152a44", accent: "#8fc7ff", progress: "#8fc7ff", progressBg: "#ffffff22", wave: "#8fc7ff", glow: "#8fc7ff" },
+    card: { show: false },
+    logo: { show: false },
+    cover: { show: true, x: 0.5, y: 0.32, size: 0.36, shape: "circle", radius: 0, border: 3, glow: 0.3, shadow: 0.4, anim: "rotate", animSpeed: 0.4 },
+    timeline: { show: true, x: 0.5, y: 0.32, w: 0.6, h: 10, circular: true, thumb: false, showTimes: false, timeSize: 22 },
+    title: { y: 0.56, size: 48, weight: 700, font: "Cairo", rtl: true, maxWidth: 0.8, maxLines: 1 },
+    subtitle: { show: false },
+    reciter: { y: 0.64, size: 28, opacity: 0.75, font: "Cairo", rtl: true, maxWidth: 0.8, maxLines: 1 },
+    verse: { show: false },
+    controls: { show: true, x: 0.5, y: 0.8, size: 0.085, gap: 0.12, prevNext: true, filled: true },
+    waveform: { show: true, style: "dots", x: 0.5, y: 0.93, w: 0.76, h: 0.035, bars: 56, opacity: 0.7 },
+  }),
+  makeExact("mini-verse", "مشغل مصغّر · آية", "مشغل مصغّر", {
+    aspect: "1:1",
+    background: { type: "gradient", blur: 0, brightness: 1, vignette: 0.5, overlay: 0, pattern: true, anim: "none" },
+    colors: { bg: "#05130e", bg2: "#0d3427", accent: "#d9c07a", progress: "#d9c07a", progressBg: "#ffffff22", wave: "#d9c07a", glow: "#d9c07a" },
+    card: { show: false },
+    logo: { show: false },
+    cover: { show: true, x: 0.5, y: 0.18, size: 0.22, shape: "circle", radius: 0, border: 3, glow: 0.25, anim: "none" },
+    verse: { show: true, y: 0.45, size: 54, font: "Amiri", rtl: true, maxLines: 3, maxWidth: 0.82, lineHeight: 1.75 },
+    title: { y: 0.63, size: 36, weight: 600, font: "Cairo", rtl: true, maxWidth: 0.8, maxLines: 1 },
+    subtitle: { show: false },
+    reciter: { y: 0.7, size: 26, opacity: 0.75, font: "Cairo", rtl: true, maxWidth: 0.8, maxLines: 1 },
+    timeline: { show: true, x: 0.5, y: 0.8, w: 0.76, h: 6, thumb: false, showTimes: true, timeSize: 22 },
+    controls: { show: true, x: 0.5, y: 0.9, size: 0.075, gap: 0.11, prevNext: true, filled: false },
+    waveform: { show: false },
+  }),
+];
+
+TEMPLATES.push(...MINI);
+
+/* Every portrait design also exists as a carefully re-flowed 1:1 layout. */
+const SQUARE: Template[] = TEMPLATES.filter((t) => t.config.aspect === "9:16").map((t) => ({
+  id: `${t.id}-square`,
+  name: `${t.name} · مربع 1:1`,
+  category: t.category,
+  config: autoFit(t.config, "1:1"),
+}));
+
+TEMPLATES.push(...SQUARE);
+
 /* Every design also exists as a ready-made 16:9 (YouTube) layout,
    auto-fitted by the layout engine. */
 const WIDE: Template[] = TEMPLATES.filter((t) => t.config.aspect !== "16:9").map((t) => ({
