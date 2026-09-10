@@ -92,8 +92,8 @@ export function autoFit(src: PlayerConfig, aspect: Aspect = src.aspect): PlayerC
     }
   };
 
-  const gap = wide ? 0.035 : 0.026;
-  const avail = wide ? 0.82 : 0.88;
+  const gap = wide ? 0.035 : square ? 0.018 : 0.026;
+  const avail = wide ? 0.82 : square ? 0.86 : 0.88;
 
   const total = () => stack.reduce((s, k) => s + blockHeight(k), 0) + gap * Math.max(0, stack.length - 1);
 
